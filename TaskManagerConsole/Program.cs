@@ -2,7 +2,23 @@
 
 class Program
 {
-    public static List<TaskManagerConsole.Task> Tasks { get; set; } = [];
+    public static List<TaskManagerConsole.Task> Tasks { get; set; } = new()
+    {
+        new TaskManagerConsole.Task()
+        {
+            Id= 1,
+            Title = "Чебуреки",
+            Description = "Вкусный рецепт чебуреков от Нурик",
+            CreatedDate = DateTime.Now.ToString(),
+            StartDate = "",
+            ClosedDate = "",
+            Status = TaskManagerConsole.TaskStatus.New
+
+        }
+    };
+    public static int TaskId { get; set; }
+
+  
 
     public static void Main(string[] args)
     {
@@ -13,10 +29,10 @@ class Program
             Console.WriteLine("1 - Создание задачи");
             Console.WriteLine("2 - Получение задачи по Id");
             Console.WriteLine("3 - Получение списка задач");
-            // Реализовать закрытие задачи
-            // Реализовать взятие задачи в работу
-            Console.WriteLine("4 - Выход из программы");
-
+            Console.WriteLine("4 - Взятие задачи в работу");
+            Console.WriteLine("5 - Закрытие задачи");
+            Console.WriteLine("6 - Выход из программы");
+            
             var key = Console.ReadKey();
 
             switch (key.Key)
@@ -33,15 +49,26 @@ class Program
 
                 case ConsoleKey.D2:
                     Console.WriteLine("Введите идентификатор задачи");
-                    var id = Convert.ToInt32(Console.ReadLine());
-                    Console.WriteLine(GetTaskById(id));
+                    TaskId = Convert.ToInt32(Console.ReadLine());
+                    Console.WriteLine(GetTaskById(TaskId));
+                    TaskId = 0;
                     break;
-
                 case ConsoleKey.D3:
                     GetTasks();
                     break;
-
                 case ConsoleKey.D4:
+                    Console.WriteLine("Введите идентификатор задачи");
+                    TaskId = Convert.ToInt32(Console.ReadLine());
+                    Console.WriteLine(InWorkStatus(TaskId));
+                    TaskId = 0;
+                    break;
+                case ConsoleKey.D5:
+                    Console.WriteLine("Введите идентификатор задачи");
+                    TaskId = Convert.ToInt32(Console.ReadLine());
+                    Console.WriteLine(ClosedStatus(TaskId));
+                    TaskId = 0;
+                    break;
+                case ConsoleKey.D6:
                     return;
             }
         }
@@ -78,5 +105,21 @@ class Program
         {
             Console.WriteLine($"Задача {task.Id}: {task.Title}, {task.Description}, {task.Status}, {task.CreatedDate}, {task.StartDate}, {task.ClosedDate}");
         }
+    }
+    public static string InWorkStatus(int id)
+    {
+        var task = Tasks[id - 1];
+        task.Status = TaskManagerConsole.TaskStatus.InWork;
+        task.StartDate = DateTime.Now.ToString();
+
+        return $"Задача {id} взята в работу";
+    }
+    public static string ClosedStatus(int id)
+    {
+        var task = Tasks[id - 1];
+        task.Status = TaskManagerConsole.TaskStatus.Closed;
+        task.ClosedDate = DateTime.Now.ToString();
+
+        return $"Задача {id} завершена";
     }
 }
